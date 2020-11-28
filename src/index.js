@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 let code = `
 divisao;
 imagem endereco="teste";
@@ -19,15 +21,15 @@ let types = {
     'paragrafo': {
         html: '<p>',
         type: 'block text',
-        parse: ({value}) => {
+        parse: ({ value }) => {
             return `<p>${value}</p>`
-        }, 
+        },
         arguments: () => null
     },
     'imagem': {
         html: '<imagem> ',
         type: 'element',
-        parse: ({arguments}) => {
+        parse: ({ arguments }) => {
             let args = arguments.reduce((string, { type, value }) => {
                 return `${string} ${typesArgs[type]}=${value}`
             }, '')
@@ -48,7 +50,7 @@ const analiseLexica = (code) => {
     let split = code.split(';').map((b) => b.replace('\n', '')).filter((b) => b.length > 0)
     return split.map((b) => {
         let firstWord = b.split(' ')[0]
-        if(!types[firstWord.trim()]) firstWord = 'paragrafo'
+        if (!types[firstWord.trim()]) firstWord = 'paragrafo'
         return { type: types[firstWord.trim()].type, value: b, arguments: types[firstWord.trim()].arguments, parse: types[firstWord.trim()].parse }
     })
 }
@@ -68,9 +70,13 @@ const analiseSintatica = (lexa) => {
     })
 }
 const gerador = (sintica) => {
-    return sintica.map(({body}) => {
-        return body.parse(body)
-    }).join('')
+    var stream = fs.createWriteStream("my_file.html");
+    stream.once('open', function (fd) {
+        sintica.map(({ body }) => {
+            stream.write(`${body.parse(body)}\n`);
+        })
+        stream.end();
+    });
 }
 
 const compile = () => {
@@ -79,4 +85,4 @@ const compile = () => {
     return gerador(sintatica)
 }
 
-console.log(compile())
+compile()
