@@ -5,6 +5,7 @@ imagem endereco="teste";
 
 divisao;
 imagem endereco="teste";
+teste com texto solto;
 *divisao;
 `
 
@@ -15,6 +16,14 @@ let typesArgs = {
 let types = {
     'divisao': { html: '<div> ', type: 'block', parse: () => '<div>', arguments: () => null },
     '*divisao': { html: '</div> ', type: 'close block', parse: () => '</div>', arguments: () => null },
+    'paragrafo': {
+        html: '<p>',
+        type: 'block text',
+        parse: ({value}) => {
+            return `<p>${value}</p>`
+        }, 
+        arguments: () => null
+    },
     'imagem': {
         html: '<imagem> ',
         type: 'element',
@@ -39,6 +48,7 @@ const analiseLexica = (code) => {
     let split = code.split(';').map((b) => b.replace('\n', '')).filter((b) => b.length > 0)
     return split.map((b) => {
         let firstWord = b.split(' ')[0]
+        if(!types[firstWord.trim()]) firstWord = 'paragrafo'
         return { type: types[firstWord.trim()].type, value: b, arguments: types[firstWord.trim()].arguments, parse: types[firstWord.trim()].parse }
     })
 }
@@ -51,6 +61,7 @@ const analiseSintatica = (lexa) => {
                 type: type,
                 name: value.split(' ')[0],
                 arguments: arguments(value),
+                value,
                 parse
             }
         }
