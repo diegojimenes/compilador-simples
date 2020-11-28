@@ -1,16 +1,5 @@
 var fs = require('fs');
 
-let code = `
-divisao;
-imagem endereco="teste";
-*divisao;
-
-divisao;
-imagem endereco="teste";
-teste com texto solto;
-*divisao;
-`
-
 let typesArgs = {
     'endereco': 'src'
 }
@@ -79,10 +68,14 @@ const gerador = (sintica) => {
     });
 }
 
-const compile = () => {
+const compile = (code) => {
     let lexa = analiseLexica(code)
     let sintatica = analiseSintatica(lexa)
     return gerador(sintatica)
 }
 
-compile()
+fs.readFile('./src/teste.jsHtml', 'utf8', function(err, data) {
+    if (err) throw err;
+    compile(data)
+});
+
