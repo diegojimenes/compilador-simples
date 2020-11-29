@@ -12,12 +12,14 @@ const catchErroInTags = (firstWord, linha) => {
         errosTags.Aberta = true
         errosTags.tag = firstWord
         errosTags.linha = linha
+    } else if (!firstWord.includes('*') && errosTags.Aberta == true && !tagsQueNaoPrecisamSerFechadas[firstWord]) {
+        throw new Error(`${errosTags.tag} na linha ${errosTags.linha} deve ser fechada`)
+    } else if (firstWord.includes('*') && errosTags.Aberta == false) {
+        throw new Error(`${errosTags.tag} na linha ${errosTags.linha} deve ser aberta`)
     } else if (firstWord.includes('*')) {
         errosTags.Aberta = false
         errosTags.tag = firstWord
         errosTags.linha = linha
-    } else if (!firstWord.includes('*') && errosTags.Aberta == true && !tagsQueNaoPrecisamSerFechadas[firstWord]) {
-        throw `${errosTags.tag} na linha ${errosTags.linha} deve ser fechada`
     }
 }
 const analiseLexica = (code) => {
