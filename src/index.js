@@ -9,7 +9,7 @@ const compile = (code) => {
     return gerador(sintatica)
 }
 
-fs.readFile('./src/teste.jsHtml', 'utf8', function (err, data) {
+fs.readFile('./src/teste.jhtml', 'utf8', function (err, data) {
     if (err) throw err;
     compile(data)
 });
