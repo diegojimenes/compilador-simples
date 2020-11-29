@@ -1,37 +1,49 @@
 var fs = require('fs');
 
 let typesArgs = {
-    'endereco': 'src'
+    'endereco': 'src',
+    'estilo': 'style'
 }
 
+const pegarArgumentos = (tag) => {
+    if (!tag) return null
+    let params = tag.split(' ').filter((b, i) => i != 0)
+    return params.map((param) => {
+        let splitParams = param.split('=')
+        return { type: splitParams[0], value: splitParams[1] }
+    })
+}
+
+const parseArgs = (arguments) => arguments.reduce((string, { type, value }) => {
+    let arg = !typesArgs[type] ? '' : `${typesArgs[type]}=${value}`
+    return `${string}${(string == '') && (arg == '') ? '': ' '}${arg}`
+}, '')
+
 let types = {
-    'divisao': { html: '<div> ', type: 'block', parse: () => '<div>', arguments: () => null },
-    '*divisao': { html: '</div> ', type: 'close block', parse: () => '</div>', arguments: () => null },
+    'divisao': {
+        html: '<div> ', type: 'block', parse: ({ arguments }) => {
+            let args = parseArgs(arguments)
+            return `<div${args}>`
+        }, arguments: (tag) => pegarArgumentos(tag)
+    },
+    '*divisao': { html: '</div> ', type: 'close block', parse: () => '</div>', arguments: (tag) => pegarArgumentos(tag) },
     'paragrafo': {
         html: '<p>',
         type: 'block text',
-        parse: ({ value }) => {
-            return `<p>${value}</p>`
+        parse: ({ value, arguments }) => {
+            let args = parseArgs(arguments)
+            return `<p${args}>${value}</p>`
         },
-        arguments: () => null
+        arguments: (tag) => pegarArgumentos(tag)
     },
     'imagem': {
         html: '<imagem> ',
         type: 'element',
         parse: ({ arguments }) => {
-            let args = arguments.reduce((string, { type, value }) => {
-                return `${string} ${typesArgs[type]}=${value}`
-            }, '')
+            let args = parseArgs(arguments)
             return `<img${args}/>`
         },
-        arguments: (tag) => {
-            if (!tag) return null
-            let params = tag.split(' ').filter((b, i) => i != 0)
-            return params.map((param) => {
-                let splitParams = param.split('=')
-                return { type: splitParams[0], value: splitParams[1] }
-            })
-        }
+        arguments: (tag) => pegarArgumentos(tag)
     }
 }
 

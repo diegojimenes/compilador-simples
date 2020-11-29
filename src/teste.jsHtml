@@ -1,8 +1,8 @@
-divisao;
+divisao estilo="background-color:#666";
 imagem endereco="teste";
 *divisao;
 
-divisao;
+divisao estilo="background-color:pink";
 imagem endereco="teste";
 teste com texto solto;
 *divisao;
