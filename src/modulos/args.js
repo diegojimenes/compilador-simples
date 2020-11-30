@@ -1,6 +1,7 @@
 let typesArgs = {
     'endereco': 'src',
-    'estilo': 'style'
+    'estilo': 'style',
+    'classe': 'class'
 }
 
 const pegarArgumentos = (tag) => {
